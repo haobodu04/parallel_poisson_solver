@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH --job-name=poisson_cuda1
+#SBATCH --output=poisson_cuda4_%j.out
+#SBATCH --error=poisson_cuda4_%j.err
+#SBATCH --nodes=1
+#SBATCH --ntasks=4
+#SBATCH --time=00:10:00
+#SBATCH --partition=gpu-short
+#SBATCH --account=aero_hpc
+#SBATCH --gres=gpu:4
+
+module purge
+module load cuda/12.6.2
+module load openmpi
+
+export CUDA_MPS_PIPE_DIRECTORY=""
+export CUDA_MPS_LOG_DIRECTORY=""
+unset CUDA_VISIBLE_DEVICES
+
+cd $SLURM_SUBMIT_DIR
+
+nvidia-smi   
+
+mpiexec -n 4 ./poisson-cuda --test 2 --Px 2 --Py 2 --Pz 1 --Nx 96 --Ny 96 --Nz 96
